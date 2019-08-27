@@ -1,6 +1,7 @@
 import React from 'react'
 import { fetchBenefits, Benefit } from '../../api/benefit';
 import { BenefitDetails } from './BenefitDetails';
+import { BenefitEditor } from "./BenefitEditor"
 
 type BenefitContainerProps = {
 }
@@ -17,7 +18,7 @@ export class BenefitContainer extends React.Component<
     state = {
         benefits: undefined,
         loading: true
-    }
+    } as BenefitContainerState
 
     async componentDidMount() {
         const benefits = await fetchBenefits()
@@ -32,8 +33,11 @@ export class BenefitContainer extends React.Component<
         ? "Loading..." : 
         <> 
             <h1>Employee Benefits!</h1>
-            {this.state.benefits.map(benefit => 
-                <BenefitDetails benefit={benefit} />    
+            <BenefitEditor onUpdate={(amount, benefitType) => {
+                console.log(amount, benefitType)
+            }} />
+            {this.state.benefits!.map(benefit => 
+                <BenefitDetails benefit={benefit} key={benefit.id} />    
             )}
         </>
     }

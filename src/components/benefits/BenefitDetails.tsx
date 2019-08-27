@@ -6,5 +6,6 @@ type BenefitDetailsProps = {
 }
 
 export const BenefitDetails = ({ benefit }: BenefitDetailsProps) => <div>
-    <a href={benefit.beneficiary.email}>{benefit.beneficiary.name}</a>
+    <a href={benefit.beneficiary.email}>{benefit.beneficiary.name}</a>, 
+    { benefit.service }, ${ benefit.monthlyFee }
 </div>
