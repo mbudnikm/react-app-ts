@@ -14,7 +14,8 @@ export type Benefit = {
 };
 
 
+// export const fetchBenefits = (): Promise<Benefit[]> => {
 export const fetchBenefits = () => {
-  return axios.get('http://localhost:3000/benefits')
+  return axios.get<Benefit[]>('http://localhost:3000/benefits')
     .then(res => res.data)
 }
