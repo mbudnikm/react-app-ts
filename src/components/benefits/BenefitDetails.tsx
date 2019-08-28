@@ -1,5 +1,6 @@
 import React from 'react';
 import { Benefit } from '../../api/benefit';
+import { BenefitIcon } from './BenefitIcon';
 
 type BenefitDetailsProps = {
     benefit: Benefit
@@ -7,5 +8,5 @@ type BenefitDetailsProps = {
 
 export const BenefitDetails = ({ benefit }: BenefitDetailsProps) => <div>
     <a href={benefit.beneficiary.email}>{benefit.beneficiary.name}</a>, 
-    { benefit.service }, ${ benefit.monthlyFee }
+    { benefit.service } <BenefitIcon service={benefit.service}/>, ${ benefit.monthlyFee }
 </div>
