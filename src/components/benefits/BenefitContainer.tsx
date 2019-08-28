@@ -30,11 +30,17 @@ export class BenefitContainer extends React.Component<
     }
 
     onUpdate = (amount: number, type: string) => {
-        produce((draft: BenefitContainerState) => {
+        const state = produce((draft: BenefitContainerState) => {
             draft.benefits!
                 .filter(benefit => benefit.service === type)
                 .forEach(benefit => benefit.monthlyFee += amount)
         })
+        this.setState(state)
+    }
+
+    getTotalMonthlyBenefitCost = () => {
+        return this.state.benefits!
+            .reduce((sum, benefit) => sum + benefit.monthlyFee, 0)
     }
 
     render() {
@@ -42,6 +48,10 @@ export class BenefitContainer extends React.Component<
         ? "Loading..." : 
         <> 
             <h1>Employee Benefits!</h1>
+            <div>
+                <h5>Summary</h5>
+                Total monthly cost: { this.getTotalMonthlyBenefitCost() }
+            </div>
             <BenefitEditor onUpdate={this.onUpdate} />
             {this.state.benefits!.map(benefit => 
                 <BenefitDetails benefit={benefit} key={benefit.id} />    
