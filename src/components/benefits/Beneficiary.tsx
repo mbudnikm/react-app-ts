@@ -1,8 +1,36 @@
 import React, { useEffect, useState } from 'react';
 import { Employee, fetchEmployeeByName } from "../../api/employee"
+import { CancelTokenSource } from 'axios';
 
 type BeneficiaryProps = {
     employee: string | undefined,
+}
+
+type PromiseFn<T, A> = (arg: A) => {
+    promise: Promise<T>,
+    source: CancelTokenSource
+}
+const useJest = <T, A>(promiseFn: PromiseFn<T, A>, param: A | undefined) => {
+    const [data, setData] = useState<T | undefined>(undefined)
+
+    let source: CancelTokenSource
+    useEffect(() => {
+        if(param) {
+            const request = promiseFn(param)
+            request.promise.then(response => setData(response))
+            source = request.source
+        } else {
+            setData(undefined)
+        }
+
+        return () => {
+            if(source) {
+                source.cancel()
+            }
+        }
+    }, [param])
+
+    return data
 }
 
 export const Beneficiary = ({ employee }: BeneficiaryProps) => {
