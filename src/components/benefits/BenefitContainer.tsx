@@ -3,13 +3,15 @@ import { fetchBenefits, Benefit, patchBenefit } from '../../api/benefit';
 import { BenefitDetails } from './BenefitDetails';
 import { BenefitEditor } from "./BenefitEditor"
 import { produce } from 'immer'
+import { Beneficiary } from './Beneficiary';
 
 type BenefitContainerProps = {
 }
 
 type BenefitContainerState = {
     benefits: Benefit[] | undefined,
-    loading: boolean
+    loading: boolean,
+    chosenEmployee: string | undefined,
 }
 
 export class BenefitContainer extends React.Component<
@@ -18,7 +20,8 @@ export class BenefitContainer extends React.Component<
 > {
     state = {
         benefits: undefined,
-        loading: true
+        loading: true,
+        chosenEmployee: undefined,
     } as BenefitContainerState
 
     async componentDidMount() {
@@ -65,10 +68,19 @@ export class BenefitContainer extends React.Component<
                         Total monthly cost: { this.getTotalMonthlyBenefitCost() }
                     </>} 
             </div>
+
             <BenefitEditor onUpdate={this.onUpdate} />
+
+            <Beneficiary employee={this.state.chosenEmployee} />
+
             { this.state.loading && 'Loading...' }
             { this.state.benefits && this.state.benefits.map(benefit => 
-                <BenefitDetails benefit={benefit} key={benefit.id} />    
+                <>
+                    <BenefitDetails benefit={benefit} key={benefit.id} /> 
+                    <button onClick={() => {
+                        this.setState({ chosenEmployee: benefit.beneficiary.name })
+                    }}>Show</button>
+                </>   
             ) }
         </>
         )}
