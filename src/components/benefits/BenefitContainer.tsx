@@ -1,5 +1,5 @@
 import React from 'react'
-import { fetchBenefits, Benefit } from '../../api/benefit';
+import { fetchBenefits, Benefit, patchBenefit } from '../../api/benefit';
 import { BenefitDetails } from './BenefitDetails';
 import { BenefitEditor } from "./BenefitEditor"
 import { produce } from 'immer'
@@ -29,7 +29,17 @@ export class BenefitContainer extends React.Component<
         })
     }
 
-    onUpdate = (amount: number, type: string) => {
+    onUpdate = async (amount: number, type: string) => {
+
+        this.setState({ loading: true })
+
+        const promises = this.state.benefits!
+            .filter(benefit => benefit.service === type)
+            .map(benefit => patchBenefit(benefit.id, { monthlyFee: benefit.monthlyFee + amount }))
+
+        await Promise.all(promises)
+        this.setState({ loading: false })
+
         const state = produce((draft: BenefitContainerState) => {
             draft.benefits!
                 .filter(benefit => benefit.service === type)
@@ -44,18 +54,22 @@ export class BenefitContainer extends React.Component<
     }
 
     render() {
-        return this.state.loading
-        ? "Loading..." : 
+        return (
         <> 
             <h1>Employee Benefits!</h1>
             <div>
                 <h5>Summary</h5>
-                Total monthly cost: { this.getTotalMonthlyBenefitCost() }
+                { this.state.loading
+                    ? "Loading..." :  
+                    <>
+                        Total monthly cost: { this.getTotalMonthlyBenefitCost() }
+                    </>} 
             </div>
             <BenefitEditor onUpdate={this.onUpdate} />
-            {this.state.benefits!.map(benefit => 
+            { this.state.loading && 'Loading...' }
+            { this.state.benefits && this.state.benefits.map(benefit => 
                 <BenefitDetails benefit={benefit} key={benefit.id} />    
-            )}
+            ) }
         </>
-    }
+        )}
 }

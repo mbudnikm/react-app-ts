@@ -13,9 +13,18 @@ export type Benefit = {
   "subscribedAtDate": string;
 };
 
+export type PatchableBenefit = Partial<Benefit>
 
-// export const fetchBenefits = (): Promise<Benefit[]> => {
 export const fetchBenefits = () => {
   return axios.get<Benefit[]>('http://localhost:3000/benefits')
     .then(res => res.data)
+}
+
+export const patchBenefit = (id: Benefit['id'], benefit: Partial<Benefit>) => {
+  return axios.patch<void>(`http://localhost:3000/benefits/${id}`, benefit, {
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  })
+  .then(res => res.data)
 }
