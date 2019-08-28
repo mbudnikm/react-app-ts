@@ -1,5 +1,7 @@
 import axios from 'axios'
 
+const CancelToken = axios.CancelToken
+
 export type ContractType = "contract" | "permanent";
 
 export type Employee = {
@@ -34,7 +36,12 @@ export type Employee = {
 };
 
 export const fetchEmployeeByName = (beneficiary: string) => {
+  const source = CancelToken.source() // axios cancellation
+
   const [firstName, lastName] = beneficiary.split(' ')
-  return axios.get<Employee>(`http://localhost:3000/employees?firstName_like=${firstName}&lastName_like=${lastName}`)
-    .then(res => res.data)
+  const promise = axios.get<Employee[]>(`http://localhost:3000/employees?firstName_like=${firstName}&lastName_like=${lastName}`, {
+    cancelToken: source.token
+  })
+    .then(res => res.data[0])
+  return { promise, source }
 }

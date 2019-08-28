@@ -75,12 +75,12 @@ export class BenefitContainer extends React.Component<
 
             { this.state.loading && 'Loading...' }
             { this.state.benefits && this.state.benefits.map(benefit => 
-                <>
+                <React.Fragment key={benefit.id}>
                     <BenefitDetails benefit={benefit} key={benefit.id} /> 
                     <button onClick={() => {
                         this.setState({ chosenEmployee: benefit.beneficiary.name })
                     }}>Show</button>
-                </>   
+                </React.Fragment>   
             ) }
         </>
         )}
