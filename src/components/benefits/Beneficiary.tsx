@@ -21,7 +21,9 @@ export const Beneficiary = ({ employee }: BeneficiaryProps) => {
         }
 
         return () => {
-            source.cancel()
+            if(source) {
+                source.cancel()
+            }
         }
     }, [employee])
 
